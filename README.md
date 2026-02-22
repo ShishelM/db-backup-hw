@@ -159,11 +159,13 @@ mysqladmin -u root -p flush-logs
 # /var/lib/mysql/
 ```
 
-`Восстановление:`
+`Восстановление основного бэкапа:`
 ```bash
-# Сначала восстанавливается full_backup.sql,
-# а затем по очереди применяются бинарные логи командой mysqlbinlog:
+mysql -u root -p database_name < full_backup.sql
+```
 
+`а затем по очереди применяются бинарные логи командой mysqlbinlog:`
+```bash
 mysqlbinlog mysql-bin.000001 mysql-bin.000002 | mysql -u root -p
 ```
 
