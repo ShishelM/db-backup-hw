@@ -67,18 +67,17 @@
 
 *Приведите ответ в свободной форме.*
 
+`Резервное копирование:`
 ```bash
-# Резервное копирование:
-
 pg_dump -h localhost -U username -F c -b -v -f "my_db_backup.dump" database_name
 
 # -F c: выбор кастомного формата (сжатый, оптимальный для pg_restore).
 # -b: включение больших объектов (blobs).
 # -v: подробный вывод (verbose).
 ```
-```bash
-# Восстановление данных:
 
+`Восстановление данных:`
+```bash
 pg_restore -h localhost -U username -d database_name -v "my_db_backup.dump"
 
 # Если база данных еще не создана,
@@ -121,6 +120,7 @@ pg_restore -h localhost -U username -d database_name -v "my_db_backup.dump"
 3.1.* В каких случаях использование реплики будет давать преимущество по сравнению с обычным резервным копированием?
 
 *Приведите ответ в свободной форме.*
+
 ```
 В отличие от PostgreSQL 
 (который из коробки не умеет создавать инкрементные бэкапы),
@@ -129,12 +129,14 @@ pg_restore -h localhost -U username -d database_name -v "my_db_backup.dump"
  Для реализации инкрементального бэкапа в MySQL используем:
  Full Backup (через mysqldump) + Binary Logs.
 ```
+
 `Включение логов в my.cnf`
 ```ini
 [mysqld]
 log-bin=mysql-bin
 server-id=1
 ```
+
 `Создание «точки отсчета» (полный бэкап)`
 ```bash
 mysqldump -u root -p --all-databases --flush-logs --delete-master-logs --single-transaction > full_backup.sql
@@ -142,6 +144,7 @@ mysqldump -u root -p --all-databases --flush-logs --delete-master-logs --single-
 # -flush-logs: закрывает текущий файл бинарного лога и открывает новый.
 # --single-transaction: позволяет сделать бэкап без блокировки таблиц.
 ```
+
 `Инкрементное копирование (сохранение логов)`
 ```bash
 # Все изменения,
@@ -154,6 +157,7 @@ mysqladmin -u root -p flush-logs
 # Теперь можно безопасно забирать предыдущие файлы логов из папки:
 # /var/lib/mysql/
 ```
+
 `Восстановление:`
 ```bash
 # Сначала восстанавливается full_backup.sql,
@@ -161,6 +165,7 @@ mysqladmin -u root -p flush-logs
 
 mysqlbinlog mysql-bin.000001 mysql-bin.000002 | mysql -u root -p
 ```
+
 `Преимущества реплики перед обычным бэкапом:`
 ```
 Использование реплики (Slave-сервера) дает финансовой компании несколько критических преимуществ:
